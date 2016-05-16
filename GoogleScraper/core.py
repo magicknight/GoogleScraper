@@ -200,6 +200,7 @@ def main(return_results=False, parse_cmd_line=True, config_from_dict=None):
     keywords = set(config.get('keywords', []))
     proxy_file = config.get('proxy_file', '')
     proxy_db = config.get('mysql_proxy_db', '')
+    proxy_list = config.get('proxy_list', [])
 
     # when no search engine is specified, use google
     search_engines = config.get('search_engines', ['google',])
@@ -284,13 +285,15 @@ def main(return_results=False, parse_cmd_line=True, config_from_dict=None):
 
     proxies = []
 
-    if proxy_db:
+    if proxy_list:
+        proxies = proxy_list
+    elif proxy_db:
         proxies = get_proxies_from_mysql_db(proxy_db)
     elif proxy_file:
         proxies = parse_proxy_file(proxy_file)
 
     if config.get('use_own_ip'):
-        proxies.append(None)
+        proxies.append(None)     
 
     if not proxies:
         raise Exception('No proxies available and using own IP is prohibited by configuration. Turning down.')
